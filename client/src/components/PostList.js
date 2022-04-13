@@ -8,12 +8,16 @@ import PostForm from './PostForm';
 
 const BASE_URL = `http://localhost:3001/api`;
 
-export default function PostList() {
+export default function PostList({ user }) {
     const [posts, setPosts] = useState([]);
 
     const getPosts = async () => {
         const { data } = await axios.get(`${BASE_URL}/posts`);
         setPosts(data);
+    };
+
+    const onPostSubmit = (content) => {
+        console.log(content);
     };
 
     useEffect(() => {
@@ -22,7 +26,7 @@ export default function PostList() {
 
     return (
         <Box>
-            <PostForm />
+            <PostForm onPostSubmit={onPostSubmit} />
             <Box sx={{ mt: 2 }}>
                 {posts.map((post) => (
                     <Box

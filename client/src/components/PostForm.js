@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, IconButton, TextField } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, TextField } from '@mui/material';
 
-export default function PostForm() {
+export default function PostForm({ onPostSubmit }) {
+    const [content, setContent] = React.useState('');
+
     return (
         <Box>
             <TextField
@@ -11,6 +12,9 @@ export default function PostForm() {
                 placeholder="What's happening ?"
                 variant='filled'
                 fullWidth
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                onSubmit={() => onPostSubmit(content)}
             />
         </Box>
     );

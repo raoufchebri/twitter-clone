@@ -25,6 +25,10 @@ casual.define('author', () => ({
     )}/${casual.first_name.toLowerCase()}.svg`,
 }));
 
+function createRandomAuthor() {
+    return casual.author;
+}
+
 async function createAuthors(LIMIT = 1000) {
     const client = getClientWithKeyspace();
     let author_count = 0;
@@ -33,7 +37,7 @@ async function createAuthors(LIMIT = 1000) {
         const query = `INSERT INTO authors(${Object.keys(author).join(
             ', '
         )}) VALUES (${Object.values(author)
-            .map((value) => '?')
+            .map(() => '?')
             .join(', ')})`;
         const params = Object.values(author);
         await client.execute(query, params);
@@ -45,4 +49,4 @@ async function createAuthors(LIMIT = 1000) {
     return client;
 }
 
-createAuthors().then((client) => client.shutdown());
+module.exports = { createRandomAuthor, createAuthors };

@@ -3,6 +3,7 @@ import React from 'react';
 import PostList from './components/PostList';
 import AppBar from './components/AppBar';
 import './App.css';
+import axios from 'axios';
 
 const darkTheme = createTheme({
     palette: {
@@ -11,11 +12,19 @@ const darkTheme = createTheme({
 });
 
 function App() {
+    const [user, setUser] = React.useState({});
+    const getUser = async () => {
+        const { data } = await axios.get('http://localhost:3001/api/author/1');
+        setUser(data);
+    };
+    React.useEffect(() => {
+        getUser();
+    }, []);
     return (
         <ThemeProvider theme={darkTheme}>
-            <AppBar />
+            <AppBar user={user} />
             <Container maxWidth='sm' sx={{ mt: 4 }}>
-                <PostList />
+                <PostList user={user} />
             </Container>
         </ThemeProvider>
     );

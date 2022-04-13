@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 
-const ResponsiveAppBar = () => {
+const ResponsiveAppBar = ({ user }) => {
     return (
         <AppBar position='sticky'>
             <Container maxWidth='xl'>
@@ -30,10 +30,7 @@ const ResponsiveAppBar = () => {
 
                     <Box sx={{ flexGrow: 0 }}>
                         <IconButton sx={{ p: 0 }}>
-                            <Avatar
-                                alt='Remy Sharp'
-                                src='/static/images/avatar/2.jpg'
-                            />
+                            <Avatar alt={user.name} src={user.avatarurl} />
                         </IconButton>
                     </Box>
                 </Toolbar>
