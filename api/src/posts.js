@@ -16,48 +16,42 @@ casual.define('post', ({ id, name, avatarurl }) => ({
     content: casual.sentences(casual.integer(1, 4)),
 }));
 
-function getInsertParams(tableName, values) {
-    const fields = Object.keys(values);
-    const query = `INSERT INTO ${tableName}(${fields.join(
-        ','
-    )}) VALUES (${fields.map(() => '?').join(',')})`;
-    const params = Object.values(values);
-    return { query, params };
-}
-
-function getRandomPost(authors) {
-    const author = casual.random_element(authors);
-    const post = casual.post(author);
-    return post;
-}
-
-async function nonPrepared(client, authors, LIMIT = 1000) {
-    console.log('NonPrepared ...');
+// Generate random posts
+async function createPosts(client, authors, LIMIT = 1000) {
+    const options = {
+        consistency: types.consistencies.all,
+    };
     async.map(Array(LIMIT), async () => {
         while (true) {
-            const post = getRandomPost(authors);
-            const { query, params } = getInsertParams('posts', post);
-            await client.execute(query, params);
+            const author = casual.random_element(authors);
+            const post = casual.post(author);
+            const fields = Object.keys(post);
+            const params = Object.values(post);
+            const query = `INSERT INTO posts(${fields.join(
+                ','
+            )}) VALUES (${params.map(() => '?').join(',')})`;
+            await client.execute(query, params, options);
         }
     });
 }
 
-function nonPaged(client, LIMIT = 100) {
-    console.log('NonPaged ...');
-    const query = 'SELECT * FROM posts LIMIT 1000';
+// Read user's posts
+function readPosts(client, LIMIT = 1000) {
+    const query = 'SELECT * FROM posts LIMIT 100';
+    const options = {
+        consistency: types.consistencies.one,
+    };
     async.map(Array(LIMIT), async () => {
         try {
             while (true) {
-                // client.stream ...
-                await client.execute(query);
+                await client.execute(query, [], options);
             }
         } catch (err) {}
     });
 }
 
-function bypassCache(client, LIMIT = 100) {
-    console.log('BYPASS CACHE ...');
-    const query = 'SELECT * FROM posts LIMIT 1000 BYPASS CACHE';
+function readAuthors(client, LIMIT = 1000) {
+    const query = 'SELECT * FROM authors';
     async.map(Array(LIMIT), async () => {
         try {
             while (true) {
@@ -83,45 +77,13 @@ function reversed(client, LIMIT = 1000) {
     });
 }
 
-function consistencyLevelRead(client, LIMIT = 1000) {
-    const readQueryClOne = 'SELECT * FROM posts LIMIT 100';
-    const options = {
-        consistency: types.consistencies.one,
-        prepare: true,
-    };
+function getPostsByAuthor(client, authors, LIMIT = 1000) {
+    const query = 'SELECT * FROM posts WHERE author_name=? ALLOW FILTERING';
     async.map(Array(LIMIT), async () => {
         try {
             while (true) {
-                await client.execute(readQueryClOne, [], options);
-                console.log('done');
-            }
-        } catch (err) {}
-    });
-}
-
-function consistencyLevelWrite(client, authors, LIMIT = 1000) {
-    const options = {
-        consistency: types.consistencies.all,
-        prepare: true,
-    };
-    async.map(Array(LIMIT), async () => {
-        try {
-            while (true) {
-                const post = getRandomPost(authors);
-                const { query, params } = getInsertParams('posts', post);
-                await client.execute(query, params, options);
-            }
-        } catch (err) {}
-    });
-}
-
-function allowFiltering(client, authors, LIMIT = 1000) {
-    const query = 'SELECT * FROM posts WHERE author_id=?';
-    async.map(Array(LIMIT), async () => {
-        try {
-            while (true) {
-                const { author_id } = casual.random_element(authors);
-                await client.execute(query, [author_id]);
+                const { author_name } = casual.random_element(authors);
+                await client.execute(query, [author_name]);
             }
         } catch (err) {
             console.log(err);
@@ -135,26 +97,20 @@ async function main() {
     async.parallel(
         [
             () => {
-                nonPrepared(client, authors);
+                createPosts(client, authors);
             },
             () => {
-                allowFiltering(client, authors);
+                readPosts(client);
             },
-            // () => {
-            //     nonPaged(client);
-            // },
+            () => {
+                readAuthors(client);
+            },
             // () => {
             //     reversed(client);
             // },
             () => {
-                consistencyLevelRead(client);
+                getPostsByAuthor(client, authors);
             },
-            () => {
-                consistencyLevelWrite(client, authors);
-            },
-            // () => {
-            //     bypassCache(client);
-            // },
         ],
         (err) => {
             console.error(err);
