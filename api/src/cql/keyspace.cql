@@ -1,0 +1,1 @@
+CREATE KEYSPACE IF NOT EXISTS twitter WITH replication = { 'class': 'NetworkTopologyStrategy', 'replication_factor': '3' };

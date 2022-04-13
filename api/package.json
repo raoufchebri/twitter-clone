@@ -1,0 +1,25 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "migrate": "node src/migrate.js",
+    "posts": "nodemon src/posts.js",
+    "authors": "node src/authors.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.3",
+    "axios": "^0.26.1",
+    "cassandra-driver": "^4.6.3",
+    "casual": "^1.6.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15"
+  }
+}
