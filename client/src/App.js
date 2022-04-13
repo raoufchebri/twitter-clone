@@ -2,6 +2,7 @@ import { Container, createTheme, ThemeProvider } from '@mui/material';
 import React from 'react';
 import PostList from './components/PostList';
 import AppBar from './components/AppBar';
+import './App.css';
 
 const darkTheme = createTheme({
     palette: {

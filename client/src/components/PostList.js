@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import PostItem from './PostItem';
+import PostForm from './PostForm';
 
 const BASE_URL = `http://localhost:3001/api`;
 
@@ -21,11 +22,17 @@ export default function PostList() {
 
     return (
         <Box>
-            {posts.map((post) => (
-                <Box key={`${post.author_id}${post.timestamp}`} sx={{ mb: 2 }}>
-                    <PostItem post={post} />
-                </Box>
-            ))}
+            <PostForm />
+            <Box sx={{ mt: 2 }}>
+                {posts.map((post) => (
+                    <Box
+                        key={`${post.author_id}${post.timestamp}`}
+                        sx={{ mb: 2 }}
+                    >
+                        <PostItem post={post} />
+                    </Box>
+                ))}
+            </Box>
         </Box>
     );
 }
