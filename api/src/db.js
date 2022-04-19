@@ -17,4 +17,8 @@ const getClientWithKeyspace = () => {
     return getClient(KEYSPACE);
 };
 
-module.exports = { getClient, getClientWithKeyspace };
+const options = {
+    consistency: cassandra.types.consistencies.all,
+};
+
+module.exports = { getClient, getClientWithKeyspace, options };

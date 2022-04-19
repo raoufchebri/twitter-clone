@@ -1,5 +1,5 @@
 const express = require('express');
-const { createRandomAuthor } = require('./authors');
+// const { createRandomAuthor } = require('./authors');
 const { getClientWithKeyspace } = require('./db');
 const router = express.Router();
 
@@ -12,14 +12,20 @@ router.get('/posts', async (_, res) => {
     res.json(rows);
 });
 
+router.post('/posts', async (req, res) => {
+    console.log(req.body);
+    res.sendStatus(200);
+});
+
 router.get('/authors', async (_, res) => {
     const { rows } = await client.execute('SELECT * FROM authors');
     res.json(rows);
+    ``;
 });
 
 router.get('/author/:id', (_, res) => {
-    const author = createRandomAuthor();
-    res.json(author);
+    // const author = createRandomAuthor();
+    res.json({});
 });
 
 module.exports = router;

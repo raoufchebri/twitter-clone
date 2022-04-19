@@ -16,8 +16,21 @@ export default function PostList({ user }) {
         setPosts(data);
     };
 
-    const onPostSubmit = (content) => {
-        console.log(content);
+    const onPostSubmit = async (content) => {
+        const {
+            id: author_id,
+            name: author_name,
+            avatarurl: author_avatarurl,
+        } = user;
+        const newPost = {
+            timestamp: new Date(),
+            author_id,
+            author_name,
+            author_avatarurl,
+            content,
+        };
+        setPosts([newPost, ...posts]);
+        // await axios.post(`${BASE_URL}/posts`, newPost);
     };
 
     useEffect(() => {

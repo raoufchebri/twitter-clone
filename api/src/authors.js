@@ -49,4 +49,4 @@ async function createAuthors(LIMIT = 1000) {
     return client;
 }
 
-module.exports = { createRandomAuthor, createAuthors };
+createAuthors();
